@@ -6,7 +6,7 @@ export async function POST(req: Request) {
 
   try {
     const user = await authService.login(email, password);
-    return NextResponse.json({ user });  
+    return NextResponse.json({ user });
   } catch (err: any) {
     console.error("Error in auth POST:", err);
     return NextResponse.json({ error: err.message || "Login failed" }, { status: 401 });
