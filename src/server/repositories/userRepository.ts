@@ -18,6 +18,14 @@ export const userRepository = {
         }) > 0;
     },
 
+    existByUsername: async (username: string): Promise<boolean> => {
+        return await db.user.count({
+            where: {
+                username,
+            },
+        }) > 0;
+    },
+
     create: async (data: Prisma.UserCreateInput): Promise<User> => {
         return await db.user.create({
             data,

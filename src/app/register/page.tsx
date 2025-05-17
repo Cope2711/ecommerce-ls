@@ -5,12 +5,13 @@ import AuthForm from "@/client/components/items/forms/AuthForm";
 import Input from "@/client/components/items/input";
 import Label from "@/client/components/items/label";
 import authApi from "@/client/services/authApi";
-import { CreateUserSchema, createUserSchema } from "@/schemas/userSchemas";
+import { BaseError } from "@/shared/errors/BaseError";
+import { CreateUserSchema, createUserSchema } from "@/shared/schemas/userSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 export default function RegisterPage() {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<CreateUserSchema>({
+    const { register, handleSubmit, setError, formState: { errors } } = useForm<CreateUserSchema>({
         resolver: zodResolver(createUserSchema),
     });
 
@@ -19,7 +20,9 @@ export default function RegisterPage() {
             const response = await authApi.register(data);
             console.log("Registered", response);
         } catch (err) {
-            console.error("Error:", err);
+            if (err instanceof BaseError) {
+                setError(err.field as keyof CreateUserSchema, { message: err.message });
+            }
         }
     };
 

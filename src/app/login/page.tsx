@@ -3,14 +3,14 @@
 import Button from "@/client/components/items/button";
 import AuthForm from "@/client/components/items/forms/AuthForm";
 import Input from "@/client/components/items/input";
-import Label from "@/client/components/items/label";
 import authApi from "@/client/services/authApi";
-import { LoginSchema, loginSchema } from "@/schemas/authSchemas";
+import { LoginSchema, loginSchema } from "@/shared/schemas/authSchemas";
+import { BaseError } from "@/shared/errors/BaseError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 export default function LoginPage() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<LoginSchema>({
+  const { register, handleSubmit, setError, formState: { errors } } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
   });
 
@@ -19,7 +19,9 @@ export default function LoginPage() {
       await authApi.login(data);
       console.log("Logged in");
     } catch (err) {
-      console.error("Error:", err);
+      if (err instanceof BaseError) {
+        setError(err.field as keyof LoginSchema, { message: err.message });
+      }
     }
   };
 

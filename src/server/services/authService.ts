@@ -1,17 +1,14 @@
-import { CreateUserSchema } from "@/schemas/userSchemas";
+import { CreateUserSchema } from "@/shared/schemas/userSchemas";
 import { userService } from "./userService";
 import { User } from "@prisma/client";
+import { UnauthorizedError } from "../../shared/errors/UnauthorizedError";
 
 export const authService = {
     login: async (email: string, password: string) => {
-        const user: User | null = await userService.getByEmail(email);
-
-        if (!user) {
-            throw new Error("User not found");
-        }
+        const user: User = await userService.getByEmailThrowsNotFound(email);
 
         if (user.password !== password) {
-            throw new Error("Invalid password");
+            throw new UnauthorizedError("Invalid password", "password");
         }
 
         return user;
