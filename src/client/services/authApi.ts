@@ -1,5 +1,6 @@
-import { LoginSchema } from "@/schemas/authSchemas";
-import { CreateUserSchema } from "@/schemas/userSchemas";
+import { LoginSchema } from "@/shared/schemas/authSchemas";
+import { CreateUserSchema } from "@/shared/schemas/userSchemas";
+import { parseApiError } from "@/shared/utils/errorParser";
 import axios from "axios";
 
 const authApi = {
@@ -8,8 +9,7 @@ const authApi = {
             const response = await axios.post("/api/auth/login", data);
             return response.data;
         } catch (err: any) {
-            console.error("Error:", err.response?.data || err.message);
-            throw new Error("Failed to login");
+            throw parseApiError(err);
         }
     },
 
@@ -18,8 +18,7 @@ const authApi = {
             const response = await axios.post("/api/auth/register", data);
             return response.data;
         } catch (err: any) {
-            console.error("Error:", err.response?.data || err.message);
-            throw new Error("Failed to register");
+            throw parseApiError(err);
         }
     },
 };
